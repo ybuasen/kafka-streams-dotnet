@@ -20,8 +20,22 @@ namespace Streamiz.Kafka.Net.Stream
     {
         internal InternalTopologyBuilder Builder { get; } = new InternalTopologyBuilder();
 
-        internal Topology()
+        public Topology()
         {
+        }
+
+        public Topology AddSource<K, V>(string name, string topic)
+        {
+            var consumedInternal = new ConsumedInternal<K, V>(null, null, null, null);
+            Builder.AddSourceOperator(topic, name, consumedInternal);
+            return this;
+        }
+
+        public Topology AddSink<K, V>(string name, string topic, params string[] parentNames)
+        {
+            var topicNameExtractor = new StaticTopicNameExtractor<K, V>(topic);
+            Builder.AddSinkOperator(topicNameExtractor, name, new Produced<K, V>(null, null), parentNames);
+            return this;
         }
 
         /// <summary>
