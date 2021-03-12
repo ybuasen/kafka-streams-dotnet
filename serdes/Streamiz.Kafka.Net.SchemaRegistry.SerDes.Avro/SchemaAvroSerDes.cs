@@ -90,6 +90,9 @@ namespace Streamiz.Kafka.Net.SchemaRegistry.SerDes.Avro
                 throw new StreamsException($"SchemaAvroSerDes<{typeof(T).Name}> is not initialized !");
             }
 
+            // Prevent crashing
+            if (data == null) return default(T);
+
             return avroDeserializer
                    .AsSyncOverAsync()
                    .Deserialize(data, data == null, context);
